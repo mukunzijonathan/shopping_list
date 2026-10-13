@@ -6,9 +6,11 @@ void main() {
 
 class Item {
   Item(this.name);
-  final String name;
+  String name;
   bool bought = false;
   int quantity = 1;
+  String note = '';
+  String category = 'Food';
 }
 
 class ShoppingApp extends StatelessWidget {
@@ -104,12 +106,26 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void openDetails(Item item) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DetailsScreen(item: item)),
+    ).then((_) {
+      setState(() {});
+    });
+  }
+
   List<Item> visibleItems() {
     final toBuy = items.where((item) => !item.bought).toList();
     final bought = items.where((item) => item.bought).toList();
     if (filter == 'To buy') return toBuy;
     if (filter == 'Bought') return bought;
     return [...toBuy, ...bought];
+  }
+
+  String subtitleFor(Item item) {
+    if (item.note.isEmpty) return item.category;
+    return '${item.category} · ${item.note}';
   }
 
   @override
@@ -217,11 +233,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           : null,
                     ),
                   ),
+                  subtitle: Text(subtitleFor(item)),
                   onTap: () {
                     setState(() {
                       item.bought = !item.bought;
                     });
                   },
+                  onLongPress: () => openDetails(item),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -243,6 +261,111 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DetailsScreen extends StatefulWidget {
+  const DetailsScreen({super.key, required this.item});
+
+  final Item item;
+
+  @override
+  State<DetailsScreen> createState() => _DetailsScreenState();
+}
+
+class _DetailsScreenState extends State<DetailsScreen> {
+  final nameController = TextEditingController();
+  final noteController = TextEditingController();
+  String category = 'Food';
+
+  @override
+  void initState() {
+    super.initState();
+    nameController.text = widget.item.name;
+    noteController.text = widget.item.note;
+    category = widget.item.category;
+  }
+
+  void save() {
+    final name = nameController.text.trim();
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Type a name first')),
+      );
+      return;
+    }
+    widget.item.name = name;
+    widget.item.note = noteController.text.trim();
+    widget.item.category = category;
+    Navigator.pop(context);
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    noteController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Item details'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(12),
+        children: [
+          TextField(
+            controller: nameController,
+            decoration: const InputDecoration(labelText: 'Name'),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: noteController,
+            decoration: const InputDecoration(labelText: 'Note'),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            children: [
+              ChoiceChip(
+                label: const Text('Food'),
+                selected: category == 'Food',
+                onSelected: (_) {
+                  setState(() {
+                    category = 'Food';
+                  });
+                },
+              ),
+              ChoiceChip(
+                label: const Text('Drinks'),
+                selected: category == 'Drinks',
+                onSelected: (_) {
+                  setState(() {
+                    category = 'Drinks';
+                  });
+                },
+              ),
+              ChoiceChip(
+                label: const Text('Home'),
+                selected: category == 'Home',
+                onSelected: (_) {
+                  setState(() {
+                    category = 'Home';
+                  });
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          FilledButton(
+            onPressed: save,
+            child: const Text('Save'),
           ),
         ],
       ),
