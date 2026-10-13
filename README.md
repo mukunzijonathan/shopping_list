@@ -10,6 +10,8 @@ Mukunzi Jonathan · 27132
 
 ![Quantities](screenshots/quantities.png)
 
+![No duplicates](screenshots/no-duplicates.png)
+
 Later screenshots, saved in `screenshots/`:
 
 | Part | File |
