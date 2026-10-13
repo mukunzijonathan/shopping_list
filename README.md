@@ -14,9 +14,10 @@ Mukunzi Jonathan · 27132
 
 ![Undo](screenshots/undo.png)
 
+![Bought filter](screenshots/bought-filter.png)
+
 Later screenshots, saved in `screenshots/`:
 
 | Part | File |
 |---|---|
-| 5. Bought filter | `screenshots/bought-filter.png` |
 | 6. Item details | `screenshots/item-details.png`|
