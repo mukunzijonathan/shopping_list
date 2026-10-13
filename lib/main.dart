@@ -42,12 +42,17 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
   final controller = TextEditingController();
 
+  void showMessage(String message, {SnackBarAction? action}) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), action: action),
+    );
+  }
+
   void addItem() {
     final text = controller.text.trim();
     if (text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Type an item first')),
-      );
+      showMessage('Type an item first');
       return;
     }
 
@@ -60,12 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
         existing.quantity += 1;
       });
       controller.clear();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            '${existing.name} is already on the list: now ×${existing.quantity}',
-          ),
-        ),
+      showMessage(
+        '${existing.name} is already on the list: now ×${existing.quantity}',
       );
       return;
     }
@@ -81,6 +82,25 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       item.quantity += delta;
     });
+  }
+
+  void deleteItem(Item item) {
+    final index = items.indexOf(item);
+    final name = item.name;
+    setState(() {
+      items.remove(item);
+    });
+    showMessage(
+      '$name removed',
+      action: SnackBarAction(
+        label: 'Undo',
+        onPressed: () {
+          setState(() {
+            items.insert(index, item);
+          });
+        },
+      ),
+    );
   }
 
   @override
@@ -168,15 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete_outline),
-                        onPressed: () {
-                          final name = item.name;
-                          setState(() {
-                            items.removeAt(index);
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('$name removed')),
-                          );
-                        },
+                        onPressed: () => deleteItem(item),
                       ),
                     ],
                   ),

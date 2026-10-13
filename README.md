@@ -12,10 +12,11 @@ Mukunzi Jonathan · 27132
 
 ![No duplicates](screenshots/no-duplicates.png)
 
+![Undo](screenshots/undo.png)
+
 Later screenshots, saved in `screenshots/`:
 
 | Part | File |
 |---|---|
-| 4. Undo | `screenshots/undo.png` |
 | 5. Bought filter | `screenshots/bought-filter.png` |
-| 6. Item details | `screenshots/item-details.png` |
+| 6. Item details | `screenshots/item-details.png`|
