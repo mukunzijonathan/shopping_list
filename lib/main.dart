@@ -8,6 +8,7 @@ class Item {
   Item(this.name);
   final String name;
   bool bought = false;
+  int quantity = 1;
 }
 
 class ShoppingApp extends StatelessWidget {
@@ -61,6 +62,13 @@ class _HomeScreenState extends State<HomeScreen> {
     controller.clear();
   }
 
+  void changeQuantity(Item item, int delta) {
+    if (delta < 0 && item.quantity == 1) return;
+    setState(() {
+      item.quantity += delta;
+    });
+  }
+
   @override
   void dispose() {
     controller.dispose();
@@ -110,43 +118,57 @@ class _HomeScreenState extends State<HomeScreen> {
             child: items.isEmpty
                 ? const Center(child: Text('Your list is empty'))
                 : ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return ListTile(
-                        leading: Icon(
-                          item.bought
-                              ? Icons.check_circle
-                              : Icons.shopping_basket,
-                        ),
-                        title: Text(
-                          item.name,
-                          style: TextStyle(
-                            decoration: item.bought
-                                ? TextDecoration.lineThrough
-                                : null,
-                          ),
-                        ),
-                        onTap: () {
-                          setState(() {
-                            item.bought = !item.bought;
-                          });
-                        },
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete_outline),
-                          onPressed: () {
-                            final name = item.name;
-                            setState(() {
-                              items.removeAt(index);
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('$name removed')),
-                            );
-                          },
-                        ),
-                      );
-                    },
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return ListTile(
+                  leading: Icon(
+                    item.bought
+                        ? Icons.check_circle
+                        : Icons.shopping_basket,
                   ),
+                  title: Text(
+                    item.name,
+                    style: TextStyle(
+                      decoration: item.bought
+                          ? TextDecoration.lineThrough
+                          : null,
+                    ),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      item.bought = !item.bought;
+                    });
+                  },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove),
+                        onPressed: () => changeQuantity(item, -1),
+                      ),
+                      Text('${item.quantity}'),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () => changeQuantity(item, 1),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline),
+                        onPressed: () {
+                          final name = item.name;
+                          setState(() {
+                            items.removeAt(index);
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('$name removed')),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ],
       ),

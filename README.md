@@ -8,11 +8,12 @@ Mukunzi Jonathan · 27132
 
 ![The shopping list](screenshots/shopping-list.png)
 
+![Quantities](screenshots/quantities.png)
+
 Later screenshots, saved in `screenshots/`:
 
 | Part | File |
 |---|---|
-| 2. Quantities | `screenshots/quantities.png` |
 | 4. Undo | `screenshots/undo.png` |
 | 5. Bought filter | `screenshots/bought-filter.png` |
 | 6. Item details | `screenshots/item-details.png` |
